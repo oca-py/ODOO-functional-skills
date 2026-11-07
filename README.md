@@ -83,6 +83,7 @@ Conventions used across all skills:
 | [odoo-mcp-server](skills/odoo-mcp-server/SKILL.md) | `mcp_server` | Odoo ORM over `/mcp` | ✅ much. Consulting MCP module: install, configure, connect |
 | [sales-invoicing](skills/sales-invoicing/SKILL.md) | `account` | `account.move`, `product.product`, `res.partner` | ✅ create + validate customer invoices (20/20 cases verified) |
 | [crm-pipeline](skills/crm-pipeline/SKILL.md) | `crm` | `crm.lead`, `crm.stage`, `crm.lost.reason` | ✅ leads → opportunities → won/lost → quotation |
+| [bank-statement-import](skills/bank-statement-import/SKILL.md) | `account` | `account.bank.statement`, `account.bank.statement.line` | ✅ import statements with correct opening/closing balances (15/15 verified) |
 
 Planned: `inventory` (`stock`), `accounting` (`account`), `purchase` (`purchase`),
 `contacts` (`base`), `mrp`, `project`.
