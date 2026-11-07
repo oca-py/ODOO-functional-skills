@@ -9,6 +9,9 @@ tags: [odoo, mcp, orm, api, integration, much-consulting]
 
 # Odoo "MCP Server" module (much. Consulting)
 
+> **Free to download** — Odoo Apps Store:
+> https://apps.odoo.com/apps/modules/20.0/mcp_server
+
 The Odoo addon **`mcp_server`** ("MCP Server" by much. Consulting, OPL-1) turns the Odoo
 instance itself into an **MCP server**. Install it and Odoo exposes `/mcp` — any MCP client
 (Claude, ChatGPT, Cursor, VS Code, Hermes, …) connects straight to the Odoo URL and gets

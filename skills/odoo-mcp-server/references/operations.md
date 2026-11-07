@@ -69,6 +69,8 @@ and `proxy_mode = True` (the only option for browser OAuth), or send
 
 ## License & sourcing
 
-`mcp_server` is **Odoo Proprietary License v1.0 (OPL-1)** by much. Consulting
-(https://apps.odoo.com/apps/modules/20.0/mcp_server). This repo documents its interface only;
-it does **not** redistribute the module source. Respect the license when deploying.
+`mcp_server` is **Odoo Proprietary License v1.0 (OPL-1)** by much. Consulting — **free to
+download** from the Odoo Apps Store (https://apps.odoo.com/apps/modules/20.0/mcp_server).
+This repo documents its interface only; it does **not** redistribute the module source
+(OPL-1 forbids redistribution even though the module is free). Respect the license when
+deploying.
