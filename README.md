@@ -14,6 +14,17 @@ translation, computed fields) is not obvious from the raw table schema. An agent
 sees table columns will happily write a `sale.order` in the wrong state or skip the
 `action_confirm` step. These skills encode the *how*, not just the *what*.
 
+## Branches
+
+One branch per Odoo version, named for the version (`20.0`, `21.0`, …), following the OCA
+convention. The **default branch is `20.0`** — start every clone, PR and review there.
+A skill's `odoo_versions` frontmatter lists the versions it was verified against; the
+branch it lands on is the version it targets.
+
+| Branch | Odoo version | Default |
+|---|---|---|
+| `20.0` | Odoo 20.0 | ✅ |
+
 ## Layout
 
 ```
