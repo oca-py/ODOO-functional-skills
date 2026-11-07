@@ -37,11 +37,9 @@ branch it lands on is the version it targets.
 ```
 ODOO-functional-skills/
 ├── skills/
-│   ├── sales/                 # one directory per module / functional area
+│   ├── <area>/                # one directory per module / functional area
 │   │   ├── SKILL.md           # entry point: what it is, when to use it, quickstart
-│   │   └── references/
-│   │       ├── models.md      # tables, key fields, relations, enums
-│   │       └── workflows.md   # state machines, operations, gotchas
+│   │   └── references/        # optional deep-dives (models.md, workflows.md, …)
 │   ├── _template/             # copy this to start a new skill
 │   │   └── SKILL.md
 ├── scripts/
@@ -55,13 +53,13 @@ Every `SKILL.md` starts with YAML frontmatter so tooling can index it:
 
 ```yaml
 ---
-name: odoo-sales
-description: Work the Odoo Sales module over API/MCP: quotations, confirm, invoice.
-module: sale
+name: odoo-<area>
+description: <one line, <= 60 chars>
+module: <odoo.technical.module>
 odoo_versions: ["20.0"]
-models: [sale.order, sale.order.line]
-python_models: [sale_order, sale_order_line]
-tags: [odoo, sales, quotation, sale.order]
+models: [<dotted.model>, ...]
+python_models: [<table_name>, ...]
+tags: [odoo, <area>]
 ---
 ```
 
