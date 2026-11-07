@@ -14,6 +14,13 @@ translation, computed fields) is not obvious from the raw table schema. An agent
 sees table columns will happily write a `sale.order` in the wrong state or skip the
 `action_confirm` step. These skills encode the *how*, not just the *what*.
 
+## How we test
+
+The OCA-PY development team uses **HERMES Agent** (Nous Research) to test these packs.
+Every skill is loaded by an agent and exercised against a live Odoo instance — read the
+model, drive the workflow, run the API/MCP calls — before it lands on `20.0`. A pack that
+an agent can't follow is treated as broken, not as documentation.
+
 ## Branches
 
 One branch per Odoo version, named for the version (`20.0`, `21.0`, …), following the OCA
@@ -104,8 +111,21 @@ python scripts/odoo_rpc.py call \
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Add a skill under `skills/<area>/`, keep the
-frontmatter schema, and cite the Odoo version you verified against.
+Mechanics live in [CONTRIBUTING.md](CONTRIBUTING.md) — one module per PR, keep the
+frontmatter schema, cite the Odoo version you verified against. Three kinds of help are
+especially welcome:
+
+1. **Add a skill for another module.** Anything not yet covered — `inventory` (`stock`),
+   `account`, `purchase`, `crm`, `mrp`, `project`, … The uncovered modules are the biggest
+   gap. One module per PR.
+2. **Test with another agent chain.** We build with HERMES Agent, but the packs are meant to
+   be agent-agnostic. Run a skill through your own agent/harness (Claude Code, Codex, Cursor,
+   …), on your Odoo version, and tell us what worked and what broke. Help testing with other
+   agent chains is welcome — open an issue or a PR with the results.
+3. **Backport to an older Odoo version.** `20.0` is our reference. From our perspective a
+   backport is *mainly testing*: re-verify every field, state and method against that series,
+   fix what differs, and set the `odoo_versions` frontmatter to match. It lands when it's
+   been tested, not when it's been copied.
 
 ## License
 
