@@ -97,4 +97,6 @@ frontmatter schema, and cite the Odoo version you verified against.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+This repository is licensed under [AGPL-3.0](LICENSE), following OCA's default
+repo license policy. An individual skill may document a different license for the
+Odoo module it covers — consult that module's `__manifest__.py` `license` key.
