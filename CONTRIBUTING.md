@@ -31,7 +31,7 @@
 name: odoo-<area>            # required, kebab-case
 description: <one line>      # required, <= 60 chars
 module: <odoo.technical.module>   # required
-odoo_versions: ["16.0", ...]      # versions verified
+odoo_versions: ["20.0"]           # versions verified (this repo targets 20.0)
 models: [<dotted.model>, ...]     # required
 python_models: [<table_name>, ...]
 tags: [...]

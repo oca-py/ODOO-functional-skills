@@ -51,7 +51,7 @@ Every `SKILL.md` starts with YAML frontmatter so tooling can index it:
 name: odoo-sales
 description: Work the Odoo Sales module over API/MCP: quotations, confirm, invoice.
 module: sale
-odoo_versions: ["16.0", "17.0", "18.0", "19.0"]
+odoo_versions: ["20.0"]
 models: [sale.order, sale.order.line]
 python_models: [sale_order, sale_order_line]
 tags: [odoo, sales, quotation, sale.order]
