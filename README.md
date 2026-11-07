@@ -81,7 +81,6 @@ Conventions used across all skills:
 
 | Skill | Odoo module | Models | Status |
 |---|---|---|---|
-| [sales](skills/sales/SKILL.md) | `sale` | `sale.order`, `sale.order.line` | ✅ reference example |
 | [odoo4projects-management](skills/odoo4projects-management/SKILL.md) | – (platform ops) | ODOO4PROJECTS MCP | ✅ server ops: backups, git deploy, module install |
 | [odoo-mcp-server](skills/odoo-mcp-server/SKILL.md) | `mcp_server` | Odoo ORM over `/mcp` | ✅ much. Consulting MCP module: install, configure, connect |
 
