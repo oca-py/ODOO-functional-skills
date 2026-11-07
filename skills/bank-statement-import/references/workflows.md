@@ -94,3 +94,21 @@ statements of 15 days each, chained; 52 lines total, 2–5 distinct booking date
   explicit.
 - `date` on a line is related and not stored on the line itself; it lands on the generated journal
   entry.
+
+## Attaching the statement PDF (verified)
+
+Each statement also carries its bank document as an attachment, generated from the same data:
+
+```
+1. build the document      HTML from the statement + its lines (header, table, opening/closing)
+2. render to PDF           headless Chrome Page.printToPDF (A4, printBackground)
+3. attach                  ir.attachment {res_model:"account.bank.statement", res_id, type:"binary",
+                           name:"12333-2026-01.pdf", raw: base64}
+4. verify                  read back raw -> base64decode -> compare bytes/sha1 with the file
+```
+
+Odoo 20 specifics: the write field is **`raw`** (there is no `datas`), `mimetype` is computed and
+readonly, and reading `raw` returns `{filename, content (base64), size}`.
+
+Result on the 15 statements: 15 attachments, one per statement, `application/pdf`, ~36–40 KB each,
+and the read-back bytes are identical to the generated files (sha1 match).

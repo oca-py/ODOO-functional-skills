@@ -82,6 +82,33 @@ for r in recs:
 `balance_end` (computed) must equal `balance_end_real` (declared). If they differ, `is_valid` is
 False and the statement is unusable for reconciliation.
 
+## Attach the source PDF
+
+The statement record keeps the bank's document in its chatter. Generate the PDF from the same data
+(HTML → PDF is enough) and attach it:
+
+```python
+att = execute_kw("ir.attachment", "create", [{
+    "name": "12333-2026-01.pdf",
+    "res_model": "account.bank.statement",
+    "res_id": statement_id,
+    "type": "binary",
+    "raw": base64.b64encode(open(path, "rb").read()).decode(),   # Odoo 20: `raw`, not `datas`
+}])
+```
+
+**Odoo 20 changed this field**: `ir.attachment` no longer exposes `datas` — writes go through
+**`raw`** (base64), and `mimetype` is **computed/readonly** (don't pass it). Reading `raw` returns a
+dict: `{"filename", "content" (base64), "size"}`.
+
+Verify by byte comparison, not by "it exists":
+
+```python
+att = execute_kw("ir.attachment", "read", [[att], ["name", "file_size", "mimetype", "raw"]])[0]
+assert att["mimetype"] == "application/pdf"
+assert base64.b64decode(att["raw"]["content"]) == open(path, "rb").read()
+```
+
 ## Field map & runbook
 
 - [references/models.md](references/models.md) — statement and line fields.
