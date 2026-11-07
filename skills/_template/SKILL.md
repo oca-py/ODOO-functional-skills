@@ -2,7 +2,7 @@
 name: odoo-<area>
 description: <what this lets an agent do, <= 60 chars>
 module: <odoo.technical.module>
-odoo_versions: ["16.0", "17.0", "18.0", "19.0"]
+odoo_versions: ["20.0"]
 models: [<dotted.model>, <dotted.model>]
 python_models: [<table_name>, <table_name>]
 tags: [odoo, <area>]
