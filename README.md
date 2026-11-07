@@ -75,6 +75,7 @@ Conventions used across all skills:
 | Skill | Odoo module | Models | Status |
 |---|---|---|---|
 | [sales](skills/sales/SKILL.md) | `sale` | `sale.order`, `sale.order.line` | ✅ reference example |
+| [odoo4projects-management](skills/odoo4projects-management/SKILL.md) | – (platform ops) | ODOO4PROJECTS MCP | ✅ server ops: backups, git deploy, module install |
 
 Planned: `inventory` (`stock`), `accounting` (`account`), `purchase` (`purchase`),
 `contacts` (`base`), `crm`, `mrp`, `project`.
