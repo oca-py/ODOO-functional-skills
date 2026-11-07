@@ -81,6 +81,7 @@ Conventions used across all skills:
 |---|---|---|---|
 | [odoo4projects-management](skills/odoo4projects-management/SKILL.md) | – (platform ops) | ODOO4PROJECTS MCP | ✅ server ops: backups, git deploy, module install |
 | [odoo-mcp-server](skills/odoo-mcp-server/SKILL.md) | `mcp_server` | Odoo ORM over `/mcp` | ✅ much. Consulting MCP module: install, configure, connect |
+| [sales-invoicing](skills/sales-invoicing/SKILL.md) | `account` | `account.move`, `product.product`, `res.partner` | ✅ create + validate customer invoices (20/20 cases verified) |
 
 Planned: `inventory` (`stock`), `accounting` (`account`), `purchase` (`purchase`),
 `contacts` (`base`), `crm`, `mrp`, `project`.
