@@ -59,3 +59,19 @@ URL, DB, LOGIN, PASSWORD  ->  common.login  ->  object.execute_kw
 ```
 
 Key call shapes are in the SKILL; the field map is in `models.md`.
+
+## Sales order → invoice (verified)
+
+```
+1. sale.order create {partner_id, order_line:[(0,0,{product_id, product_uom_qty, price_unit,
+   discount, tax_ids:[(6,0,[id])], name})]}        -> S00002, state draft, 220.0
+2. sale.order action_confirm [so]                   -> state "sale", invoice_status "to invoice"
+3. sale.advance.payment.inv create {advance_payment_method:"delivered",
+   sale_order_ids:[(6,0,[so])]}                     -> wizard id
+4. sale.advance.payment.inv create_invoices [wiz]   -> account.move (draft), invoice_origin "S00002"
+5. account.move action_post [invoice]               -> INV/2026/00021, posted, 220.0
+6. sale.order read [so] ["invoice_status"]          -> "invoiced"
+```
+
+Blocked path (do not try): `sale.order._create_invoices` — "Private methods ... cannot be called
+remotely"; the MCP `call_model_method` refuses `_`-methods too.

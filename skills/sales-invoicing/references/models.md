@@ -53,3 +53,33 @@ fields from `l10n_py_base`.
 
 `name`, `code`, `type` (`sale` for customer invoices), `default_account_id`. PY journals also carry
 `l10n_py_establishment`, `l10n_py_point` (used for SIFEN documents).
+
+## `sale.order` → `sale_order`
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | char | `S00002`; assigned on create |
+| `partner_id` | many2one `res.partner` | **Required** |
+| `state` | selection | `draft` (Quotation), `sent`, `sale` (Sales Order), `cancel` |
+| `date_order` | datetime | **Required**; defaults to now |
+| `validity_date` | date | Expiration |
+| `pricelist_id` | many2one | Drives `price_unit`; default pricelist if unset |
+| `payment_term_id` | many2one | Payment terms |
+| `order_line` | one2many `sale.order.line` | Lines (inverse `order_id`) |
+| `invoice_status` | selection | `no`, `to invoice`, `invoiced`, `upselling` |
+| `invoice_ids` | many2many `account.move` | Invoices created from the order |
+| `client_order_ref` | char | Customer's reference |
+| `note` | html | Terms and conditions |
+| `amount_untaxed` / `amount_tax` / `amount_total` | monetary | Computed |
+
+## `sale.order.line` → `sale_order_line`
+
+`product_id`, `product_uom_qty` (**required**), `product_uom_id` (UoM — there is no
+`product_uom`), `price_unit` (**required**), `discount` (percent), **`tax_ids`** (many2many — not
+`tax_id`), `name` (description), `qty_invoiced`, `qty_delivered`, `price_subtotal`/`price_tax`/`price_total`.
+
+## `sale.advance.payment.inv` (wizard)
+
+`advance_payment_method`: **`delivered`** (Regular invoice), **`percentage`** (down payment %),
+**`fixed`** (down payment, fixed amount); `sale_order_ids` (many2many). Call its public
+`create_invoices()`. Used because `sale.order._create_invoices` is private and refused over RPC/MCP.

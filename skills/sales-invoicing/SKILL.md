@@ -3,7 +3,7 @@ name: odoo-sales-invoicing
 description: Create and validate (post) customer invoices in Odoo via API/MCP.
 module: account
 odoo_versions: ["20.0"]
-models: [account.move, account.move.line, product.product, res.partner, account.tax, account.journal]
+models: [account.move, account.move.line, sale.order, sale.order.line, product.product, res.partner, account.tax, account.journal]
 python_models: [account_move, account_move_line, product_product, res_partner, account_tax, account_journal]
 tags: [odoo, sales, invoicing, account.move, api, mcp]
 ---
@@ -39,6 +39,59 @@ Never guess an id, never create a duplicate of an existing product/partner — s
 | `res.partner` | `res_partner` | The customer (`partner_id`) |
 | `account.tax` | `account_tax` | IVA 10% / 5% / Exento / Exonerado |
 | `account.journal` | `account_journal` | The sales journal |
+| `sale.order` | `sale_order` | Quotation / sales order (Sales app) |
+| `sale.order.line` | `sale_order_line` | Quotation lines |
+| `sale.advance.payment.inv` | — (wizard) | The "Create Invoice" / down-payment wizard |
+
+## Sales module — quotation → order → invoice
+
+The Sales app adds **`sale.order`**. Lifecycle: `draft` (Quotation) → `sent` → **`sale`**
+(Sales Order) → `cancel`. `invoice_status`: `no` → `to invoice` → `invoiced` (`upselling` when
+lines are added after invoicing).
+
+**1. Create a quotation** (`sale.order` + `sale.order.line` — note **`tax_ids`**, not `tax_id`):
+
+```python
+so = execute_kw("sale.order", "create", [{
+    "partner_id": partner_id,
+    # "pricelist_id": pricelist_id,      # optional; the default pricelist applies otherwise
+    "order_line": [(0, 0, {
+        "product_id": product_id,
+        "product_uom_qty": 2,            # required
+        "price_unit": 100.0,             # omit to let the pricelist compute it
+        "discount": 0.0,                 # percent
+        "tax_ids": [(6, 0, [tax_id])],
+        "name": "TEST PRODUCT",
+    })],
+}])
+# -> name "S00002", state "draft", amount_total 220.0
+```
+
+**2. Confirm** (quotation → sales order): `execute_kw("sale.order", "action_confirm", [[so]])`
+→ `state="sale"`, `invoice_status="to invoice"`. (`action_quotation_sent` moves draft → sent.)
+
+**3. Invoice it.** `_create_invoices` is **private and cannot be called over RPC** — Odoo returns
+"Private methods (such as 'sale.order._create_invoices') cannot be called remotely", and the MCP's
+`call_model_method` refuses `_`-methods too. Drive the public **advance-payment wizard** (what the
+"Create Invoice" button does):
+
+```python
+wiz = execute_kw("sale.advance.payment.inv", "create",
+                 [{"advance_payment_method": "delivered",   # "Regular invoice"
+                   "sale_order_ids": [(6, 0, [so])]}])
+execute_kw("sale.advance.payment.inv", "create_invoices", [[wiz]])
+# -> account.move (draft), invoice_origin = "S00002"
+execute_kw("account.move", "action_post", [[invoice_id]])
+```
+
+`advance_payment_method`: **`delivered`** = regular invoice, **`percentage`** = down payment %,
+**`fixed`** = down payment, fixed amount.
+
+**4. Cancel**: `execute_kw("sale.order", "action_cancel", [[so]])`.
+
+Pricelists apply automatically through `sale.order.pricelist_id`; the invoicing policy is per
+product (`invoice_policy`: `order` vs `delivery`) and surfaces as `invoice_status`. The UoM field
+on a line is `product_uom_id` (there is no `product_uom`).
 
 Key invoice fields and the operation/runbook are in
 [references/workflows.md](references/workflows.md); the field map in
