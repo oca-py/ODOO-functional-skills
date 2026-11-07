@@ -101,6 +101,17 @@ att = execute_kw("ir.attachment", "create", [{
 **`raw`** (base64), and `mimetype` is **computed/readonly** (don't pass it). Reading `raw` returns a
 dict: `{"filename", "content" (base64), "size"}`.
 
+**Attaching alone is not enough.** `account.bank.statement.attachment_ids` is a **many2many** on
+this model (not the chatter one2many), so a file attached only by `res_model`/`res_id` does **not**
+show on the record. Link it explicitly:
+
+```python
+execute_kw("account.bank.statement", "write", [[statement_id], {"attachment_ids": [(4, att_id)]}])
+```
+
+Without that `write`, `attachment_ids` stays `[]` even though the file exists — the mistake that
+makes "I attached it but I don't see it" happen.
+
 Verify by byte comparison, not by "it exists":
 
 ```python
