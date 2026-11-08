@@ -4,7 +4,7 @@ description: Operate an ODOO4PROJECTS Odoo server over its MCP: backups, git dep
 module: 4projects_server
 odoo_versions: ["20.0"]
 tools: [apps_list, apps_install, apps_upgrade_all, apps_update_list, backups_list, backups_create, backups_restore, logs_list, logs_grep, git_get_path, git_get_key, git_set_key, git_pull, domains_get, domains_set, server_restart]
-tags: [odoo, odoo4projects, mcp, deployment, ops, module-install]
+tags: [odoo, odoo4projects, mcp, deployment, ops, module-install, recovery]
 ---
 
 # ODOO4PROJECTS server management
@@ -18,7 +18,8 @@ logs, git, domains, server. It is the control plane for everything below.
 
 Load this skill when a task says: install a module on the Odoo server, deploy addons,
 add an OCA repo to the instance, take/restore a backup, restart Odoo, "check the logs",
-or work an `odoo4projects.com` instance.
+recover an instance whose MCP is down after a bad deploy, or work an `odoo4projects.com`
+instance.
 
 ## Connect
 
@@ -38,7 +39,41 @@ Accept: application/json, text/event-stream
 
 Full tool list and argument schemas: [references/mcp-tools.md](references/mcp-tools.md).
 The deploy/install runbook and the hard-won gotchas:
-[references/workflows.md](references/workflows.md).
+[references/workflows.md](references/workflows.md). The out-of-band recovery path:
+[references/recovery-webhook.md](references/recovery-webhook.md).
+
+## Breaking glass — when the MCP is down
+
+The MCP lives **inside Odoo**, so if a bad module is checked in and Odoo fails to boot, the
+MCP goes down with it — you lose `git_pull`, `server_restart` and `logs_grep`, exactly when
+you need them. The platform still exposes a **control webhook outside Odoo** (an n8n
+endpoint) that answers even while the instance returns 500:
+
+```
+GET https://n8n.odoo4projects.com/webhook/ODOO4projects/support
+Header: Authorization: Bearer ***        # platform support key — never hardcode
+Query:  action=<pull|restart|log>&uuid=<instance-db-name>
+```
+
+**Key:** if you do not already have the platform support key, **ask the user to get a bearer
+key from the chatbot at [ODOO4projects.com](https://odoo4projects.com)** and provide it — do
+not guess or reuse the Odoo API key.
+
+- `uuid` = the **instance DB name** = the hostname minus `.saopaulo`
+  (e.g. `005-005-fcc3a4fe-ccbc-4e7a-b8c5-ac30a9a7528a`).
+- `action=log` → `{uuid, important_odoo_log_lines[…], last_git_log_lines[…]}` (pre-grepped,
+  newest last) — the fastest way to see *why* Odoo died.
+- `action=pull` → `git pull` on the live checkout; returns the git output.
+- `action=restart` → restarts Odoo (needed after `pull` to rescan addons).
+- Any other action → `{"INFO":"… Actions are: pull, restart, log"}`.
+
+⚠️ **`pull` also reverts the tip commit** on the live checkout, so a fix pushed as the tip
+gets undone. Push the fix, then push an **empty no-op commit** on top; `pull` applies both
+and reverts only the no-op.
+
+Recover a broken deploy: `action=log` (find the traceback) → push fix + no-op commit →
+`action=pull` → `action=restart` → `action=log` to confirm. Full details:
+[references/recovery-webhook.md](references/recovery-webhook.md).
 
 ## The 16 tools
 
